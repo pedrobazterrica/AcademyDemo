@@ -1,5 +1,7 @@
 package vivere.academia.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -29,6 +31,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime registerDate;
     @NotNull
     @Column(length = 30)
@@ -47,6 +50,6 @@ public class User {
     @Column(columnDefinition="CHAR(1)")
     private char profile;
     @NotNull
-    @Column(columnDefinition="CHAR(1)")
+    @Column(columnDefinition="CHAR(1) CHECK (status IN ('A', 'O'))")
     private char status;
 }

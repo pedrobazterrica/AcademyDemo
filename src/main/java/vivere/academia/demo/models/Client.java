@@ -21,6 +21,9 @@ public class Client {
 
     private LocalDateTime registerDate;
 
+    //You could also use @Column(nullable = false)
+    //The difference between that and @NotNull is that with what I used the validation is done by hibernate
+    //and if you send a null value the query isn't even sent to the database (even though the column also has the notnull constraint)
     @NotNull
     @Column(length = 30)
     private String name;
