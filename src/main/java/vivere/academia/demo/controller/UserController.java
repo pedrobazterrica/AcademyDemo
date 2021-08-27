@@ -10,11 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vivere.academia.demo.exceptions.UserLoginAlreadyExistsException;
 import vivere.academia.demo.exceptions.UserNotExistsException;
 import vivere.academia.demo.models.User;
 import vivere.academia.demo.service.interf.IUserService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -29,18 +31,19 @@ public class UserController {
     }
 
     @PostMapping
-    public void createUser(@RequestBody User user){
+    public void createUser(@RequestBody User user) throws UserLoginAlreadyExistsException {
         userService.createUser(user);
     }
 
-    @GetMapping
-    public List<User> getAllUsers(){
-        return userService.findAllUsers();
-    }
 
     @DeleteMapping("/{id}")
     public void deleteUserById(@PathVariable int id) throws UserNotExistsException {
         userService.deleteUserById(id);
+    }
+
+    @GetMapping
+    public List<User> findByQuery(@RequestParam(required = false) String name, @RequestParam(required = false) String email){
+        return userService.findByQuery(Optional.ofNullable(name), Optional.ofNullable(email));
     }
 
     //In order to use this endpoint you need to change 'Content-type' header to = 'application/json-patch+json' and use the proper patch format

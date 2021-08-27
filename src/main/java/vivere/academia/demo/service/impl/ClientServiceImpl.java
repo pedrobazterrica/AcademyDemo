@@ -4,17 +4,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vivere.academia.demo.exceptions.ClientNotExistsException;
 import vivere.academia.demo.models.Client;
+import vivere.academia.demo.repository.CustomRepository.IClientRepositoryDAOCustom;
+import vivere.academia.demo.repository.CustomRepository.utils.SearchCriteria;
 import vivere.academia.demo.repository.IClientRepository;
 import vivere.academia.demo.service.interf.IClientService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Service
 public class ClientServiceImpl implements IClientService {
     private final IClientRepository clientRepository;
+    private final IClientRepositoryDAOCustom clientDAO;
 
     @Autowired
-    public ClientServiceImpl(IClientRepository clientRepository) {
+    public ClientServiceImpl(IClientRepository clientRepository, IClientRepositoryDAOCustom clientDAO) {
         this.clientRepository = clientRepository;
+        this.clientDAO = clientDAO;
     }
 
     @Override
@@ -37,7 +46,19 @@ public class ClientServiceImpl implements IClientService {
     }
 
     @Override
-    public List<Client> findAllClients() {
-        return clientRepository.findAll();
+    public List<Client> findAllClients(Optional<String> search) {
+        if(search.isPresent()){
+            List<SearchCriteria> params = new ArrayList<SearchCriteria>();
+            if (search != null) {
+                Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
+                Matcher matcher = pattern.matcher(search + ",");
+                while (matcher.find()) {
+                    params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
+                }
+            }
+            return clientDAO.searchClient(params);
+        }else{
+            return clientRepository.findAll();
+        }
     }
 }

@@ -1,10 +1,13 @@
 package vivere.academia.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,9 +19,12 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToMany(mappedBy = "client")
-    private List<CashBook> cashBookList;
+//    @OneToMany(mappedBy = "client")
+//    private List<CashBook> cashBookList;
 
+    @CreationTimestamp
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Column(nullable = false)
     private LocalDateTime registerDate;
 
     //You could also use @Column(nullable = false)
@@ -31,6 +37,7 @@ public class Client {
     @NotNull
     @Column(length = 14)
     @Size(min = 14, max = 14)
+    @Pattern(regexp = "[0-9]+")
     private String cpfCnpj;
 
     @NotNull

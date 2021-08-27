@@ -1,8 +1,10 @@
 package vivere.academia.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -31,7 +33,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @CreationTimestamp
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Column(nullable = false)
     private LocalDateTime registerDate;
     @NotNull
     @Column(length = 30)
@@ -47,9 +52,9 @@ public class User {
     @Column(length = 100)
     private String email;
     @NotNull
-    @Column(columnDefinition="CHAR(1)")
+    @Column(columnDefinition="CHAR(1) CHECK (profile IN ('A', 'O'))")
     private char profile;
     @NotNull
-    @Column(columnDefinition="CHAR(1) CHECK (status IN ('A', 'O'))")
+    @Column(columnDefinition="CHAR(1) CHECK (status IN ('A', 'C'))")
     private char status;
 }
